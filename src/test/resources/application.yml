@@ -1,0 +1,24 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: io.wwytake.uid.sqlite.SQLiteDialect
+  profiles:
+    active: ${config_profile:mybatis}
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    druid:
+      filters: stat
+      defaultAutoCommit: true
+      initialSize: 2
+      max-active: 10
+      min-idle: 1
+      max-pool-prepared-statement-per-connection-size: -1
+      max-wait: 5000
+      pool-prepared-statements: false
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      validationQuery: select 'x'
+    url: jdbc:sqlite::resource:db/db.db
+
