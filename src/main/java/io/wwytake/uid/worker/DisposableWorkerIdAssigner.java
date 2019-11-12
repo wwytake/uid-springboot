@@ -54,7 +54,7 @@ public class DisposableWorkerIdAssigner implements WorkerIdAssigner {
 
         // add worker node for new (ignore the same IP + PORT)
         workerNodeHandler.addWorkerNode(workerNodeEntity);
-        LOGGER.info("Add worker node:" + workerNodeEntity);
+        LOGGER.debug("Add worker node:" + workerNodeEntity);
 
         return workerNodeEntity.getId();
     }
