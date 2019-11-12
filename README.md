@@ -11,8 +11,7 @@ UidGenerator
 ├── README.md
 ├── logs			# 日志目录
 ├── pom.xml			# 父POM
-├── uid-consumer	# spring boot应用
-└── uid-generator	# UID组件
+└── src	# UID源码
 ```
 
 ## 概述
@@ -26,7 +25,7 @@ UidGenerator是Java实现的，基于[Snowflake](https://github.com/twitter/snow
 
 Snowflake算法
 -------------
-![Snowflake](uid-generator/doc/snowflake.png)  
+![Snowflake](doc/snowflake.png)
 Snowflake算法描述：指定机器 & 同一时刻 & 某一并发序列，是唯一的。据此可生成一个64 bits的唯一ID（long）。默认采用上图字节分配方式：
 
 * sign(1bit)  
@@ -78,11 +77,11 @@ Tail指针、Cursor指针用于环形数组上读写slot：
 
   表示Consumer消费到的最小序号(序号序列与Producer序列相同)。Cursor不能超过Tail，即不能消费未生产的slot。当Cursor已赶上tail，此时可通过```rejectedTakeBufferHandler```指定TakeRejectPolicy。
 
-![RingBuffer](uid-generator/doc/ringbuffer.png)  
+![RingBuffer](doc/ringbuffer.png)
 
 CachedUidGenerator采用了双RingBuffer，Uid-RingBuffer用于存储Uid、Flag-RingBuffer用于存储Uid状态(是否可填充、是否可消费)。由于数组元素在内存中是连续分配的，可最大程度利用CPU cache以提升性能。但同时会带来「伪共享」FalseSharing问题，为此在Tail、Cursor指针、Flag-RingBuffer中采用了CacheLine补齐方式。
 
-![FalseSharing](uid-generator/doc/cacheline_padding.png) 
+![FalseSharing](doc/cacheline_padding.png)
 
 #### RingBuffer填充时机 ####
 * 初始化预填充
@@ -137,11 +136,11 @@ PRIMARY KEY(ID)
 ```
 
 #### 步骤3: 修改Spring Boot配置
-提供了两种生成器：[DefaultUidGenerator](uid-generator/src/main/java/io/prong/uid/impl/DefaultUidGenerator.java)、[CachedUidGenerator](uid-generator/src/main/java/io/prong/uid/impl/CachedUidGenerator.java)。如对UID生成性能有要求，请使用CachedUidGenerator。
+提供了两种生成器：[DefaultUidGenerator](src/main/java/io/prong/uid/impl/DefaultUidGenerator.java)、[CachedUidGenerator](src/main/java/io/prong/uid/impl/CachedUidGenerator.java)。如对UID生成性能有要求，请使用CachedUidGenerator。
 
 #### DefaultUidGenerator配置
 
-在 *[application.yml](uid-generator/src/test/resources/application.yml)* 中配置ID生成规则：
+在 *[application.yml](src/test/resources/application.yml)* 中配置ID生成规则：
 
 ```yaml
 # 以下为可选配置, 如未指定将采用默认值
@@ -167,7 +166,7 @@ WorkerIdAssigner workerIdAssigner() {
 
 #### CachedUidGenerator配置
 
-在 *[application.yml](uid-generator/src/test/resources/application.yml)* 中配置ID生成规则：
+在 *[application.yml](src/test/resources/application.yml)* 中配置ID生成规则：
 
 ```yaml
 # 以下为可选配置, 如未指定将采用默认值
@@ -220,7 +219,7 @@ public class CustomRejectedPutBufferHandler implements RejectedPutBufferHandler 
 
 #### Mybatis配置
 
-在 *[application.yml](uid-generator/src/test/resources/application.yml)* 中配置数据源和mybatis：
+在 *[application.yml](src/test/resources/application.yml)* 中配置数据源和mybatis：
 
 ```yaml
 mybatis: 
@@ -253,7 +252,7 @@ spring:
     password: xxxx
 ```
 
-修改 *[application.yml](uid-generator/src/test/resources/application.yml)* 配置中，url、username 和 password，确保mysql地址、名称、端口号、用户名和密码正确。
+修改 *[application.yml](src/test/resources/application.yml)* 配置中，url、username 和 password，确保mysql地址、名称、端口号、用户名和密码正确。
 
 #### 步骤4: 运行示例单测
 
@@ -304,7 +303,7 @@ public void testSerialGenerate() {
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |throughput|6,831,465|7,007,279|6,679,625|6,499,205|6,534,971|7,617,440|6,186,930|6,364,997|
 
-![throughput1](uid-generator/doc/throughput1.png)
+![throughput1](doc/throughput1.png)
 
 再固定住timeBits为任选一个值(如31)，分别统计workerBits变化时(如从20至29，总重启次数分别对应1百万和500百万)的吞吐量，如下表所示：
 
@@ -312,7 +311,7 @@ public void testSerialGenerate() {
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |throughput|6,186,930|6,642,727|6,581,661|6,462,726|6,774,609|6,414,906|6,806,266|6,223,617|6,438,055|6,435,549|
 
-![throughput1](uid-generator/doc/throughput2.png)
+![throughput1](doc/throughput2.png)
 
 由此可见, 不管如何配置, CachedUidGenerator总能提供**600万/s**的稳定吞吐量, 只是使用年限会有所减少。这真的是太棒了。
 
@@ -322,4 +321,4 @@ public void testSerialGenerate() {
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |throughput|6,462,726|6,542,259|6,077,717|6,377,958|7,002,410|6,599,113|7,360,934|6,490,969|
 
-![throughput1](uid-generator/doc/throughput3.png)
+![throughput1](doc/throughput3.png)
