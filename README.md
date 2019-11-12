@@ -109,7 +109,7 @@ Quick Start
 
 ### 单元测试
 
-#### [RunTest](src/main/java/io/wwytake/uid/run/RunTest.java)
+#### [RunTest](src/test/java/io/wwytake/uid/run/MybaitsDefaultRunTest.java)
 
 ### 关于UID比特分配的建议
 
