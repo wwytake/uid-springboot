@@ -2,7 +2,7 @@ UidGenerator
 ==========================
 ## 前言
 
-本组件是 [百度UID](https://github.com/baidu/uid-generator) 的一个派生版本，改造为基于spring boot的版本，并封装为starter的方式，以方便作为组件引入到spring boot项目。
+本组件是 [百度UID](https://github.com/baidu/uid-generator) 的一个派生版本，改造为基于spring boot 的版本 ,集成mybatis,jpa实现.
 
 工程结构说明：
 
@@ -47,12 +47,16 @@ Snowflake算法描述：指定机器 & 同一时刻 & 某一并发序列，是�
 **以上参数均可通过application.yml进行自定义**：
 
 ```yaml
-prong: 
+wwytake:
   uid: 
     timeBits: 29
     workerBits: 21
     seqBits: 13
     epochStr: "2018-11-26"
+    CachedUidGenerator:          # 无此项,默认DefaultUidGenerator
+          boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
+          padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
+          #schedule-interval: 60  # 默认:不配置此项, 即不实用Schedule线程. 如需使用, 请指定Schedule线程时间间隔, 单位:秒
 ```
 
 ## 组件功能简述
@@ -100,193 +104,9 @@ CachedUidGenerator采用了双RingBuffer，Uid-RingBuffer用于存储Uid、Flag-
 Quick Start
 ------------
 
-### 运行单元测试
+### 单元测试
 
-#### 步骤1: 安装依赖
-先下载[Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html), [MySQL](https://dev.mysql.com/downloads/mysql/)和[Maven](https://maven.apache.org/download.cgi)
-
-##### 设置环境变量
-maven无须安装, 设置好MAVEN_HOME即可. 可像下述脚本这样设置JAVA_HOME和MAVEN_HOME, 如已设置请忽略.
-```shell
-export MAVEN_HOME=/xxx/xxx/software/maven/apache-maven-3.3.9
-export PATH=$MAVEN_HOME/bin:$PATH
-JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home";
-export JAVA_HOME;
-```
-
-#### 步骤2: 创建表WORKER_NODE
-运行sql脚本以导入表WORKER_NODE，脚本如下：
-```sql
-DROP DATABASE IF EXISTS `xxxx`;
-CREATE DATABASE `xxxx` ;
-use `xxxx`;
-DROP TABLE IF EXISTS WORKER_NODE;
-CREATE TABLE WORKER_NODE
-(
-ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
-HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
-PORT VARCHAR(64) NOT NULL COMMENT 'port',
-TYPE INT NOT NULL COMMENT 'node type: ACTUAL or CONTAINER',
-LAUNCH_DATE DATE NOT NULL COMMENT 'launch date',
-MODIFIED TIMESTAMP NOT NULL COMMENT 'modified time',
-CREATED TIMESTAMP NOT NULL COMMENT 'created time',
-PRIMARY KEY(ID)
-)
- COMMENT='DB WorkerID Assigner for UID Generator',ENGINE = INNODB;
-```
-
-#### 步骤3: 修改Spring Boot配置
-提供了两种生成器：[DefaultUidGenerator](src/main/java/io/prong/uid/impl/DefaultUidGenerator.java)、[CachedUidGenerator](src/main/java/io/prong/uid/impl/CachedUidGenerator.java)。如对UID生成性能有要求，请使用CachedUidGenerator。
-
-#### DefaultUidGenerator配置
-
-在 *[application.yml](src/test/resources/application.yml)* 中配置ID生成规则：
-
-```yaml
-# 以下为可选配置, 如未指定将采用默认值
-prong: 
-  uid: 
-    timeBits: 29
-    workerBits: 21
-    seqBits: 13
-    epochStr: "2018-11-26"
-```
-
-spring boot 中生成 WorkerIdAssigner 接口的一个实例：
-
-```java
-@Bean
-@ConditionalOnMissingBean
-WorkerIdAssigner workerIdAssigner() {
-	return new DisposableWorkerIdAssigner();
-}
-```
-
-> 注意：DisposableWorkerIdAssigner 可以根据需要替换成其他实现。
-
-#### CachedUidGenerator配置
-
-在 *[application.yml](src/test/resources/application.yml)* 中配置ID生成规则：
-
-```yaml
-# 以下为可选配置, 如未指定将采用默认值
-prong: 
-  uid: 
-    timeBits: 29
-    workerBits: 21
-    seqBits: 13
-    epochStr: "2018-11-26"
-    CachedUidGenerator:
-      boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
-      padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
-      #schedule-interval: 60  # 默认:不配置此项, 即不实用Schedule线程. 如需使用, 请指定Schedule线程时间间隔, 单位:秒
-```
-
-spring boot 中生成 WorkerIdAssigner 接口的一个实例：
-
-```java
-@Bean
-@ConditionalOnMissingBean
-WorkerIdAssigner workerIdAssigner() {
-	return new DisposableWorkerIdAssigner();
-}
-```
-
-> 注意：DisposableWorkerIdAssigner 可以根据需要替换成其他实现。
-
-根据需要指定2个拒绝策略的接口实现（*默认无需指定*）：
-
-- RejectedPutBufferHandler接口：拒绝策略: 当环已满, 无法继续填充。
-  默认无需指定, 将丢弃Put操作, 仅日志记录. 如有特殊需求, 请实现该接口(支持Lambda表达式)。
-- RejectedTakeBufferHandler接口：拒绝策略: 当环已空, 无法继续获取时。
-  默认无需指定, 将记录日志, 并抛出UidGenerateException异常. 如有特殊需求, 请实现该接口(支持Lambda表达式)。
-
-例如，下面实现了一个当环已满, 无法继续填充时的自定义策略：
-
-```java
-@Component
-public class CustomRejectedPutBufferHandler implements RejectedPutBufferHandler {
-
-	/**
-	 * 只打印，不记日志
-	 */
-	@Override
-	public void rejectPutBuffer(RingBuffer ringBuffer, long uid) {
-		System.out.format("Rejected putting buffer for uid:{%d}. {%s}\r\n", uid, ringBuffer.toString());
-	}
-}
-```
-
-#### Mybatis配置
-
-在 *[application.yml](src/test/resources/application.yml)* 中配置数据源和mybatis：
-
-```yaml
-mybatis: 
-  configuration:
-    default-fetch-size: 100
-    default-statement-timeout: 30
-    map-underscore-to-camel-case: true
-  mapper-locations: classpath*:mapper/**/*.xml
-mapper: 
-  mappers: 
-    - tk.mybatis.mapper.common.Mapper
-spring: 
-  datasource: 
-    driver-class-name: com.mysql.jdbc.Driver
-    druid: 
-      filters: stat
-      defaultAutoCommit: true
-      initialSize: 2
-      max-active: 10
-      min-idle: 1
-      max-pool-prepared-statement-per-connection-size: -1
-      max-wait: 5000
-      pool-prepared-statements: false
-      test-on-borrow: false
-      test-on-return: false
-      test-while-idle: true
-      validation-query: SELECT 1 FROM DUAL
-    url: jdbc:mysql://localhost:xxxx/xxxx
-    username: xxxx
-    password: xxxx
-```
-
-修改 *[application.yml](src/test/resources/application.yml)* 配置中，url、username 和 password，确保mysql地址、名称、端口号、用户名和密码正确。
-
-#### 步骤4: 运行示例单测
-
-运行单测[CachedUidGeneratorTest](src/test/java/com/baidu/fsg/uid/CachedUidGeneratorTest.java), 展示UID生成、解析等功能
-```java
-@Resource
-private UidGenerator uidGenerator;
-
-@Test
-public void testSerialGenerate() {
-    // Generate UID
-    long uid = uidGenerator.getUID();
-
-    // Parse UID into [Timestamp, WorkerId, Sequence]
-    // {"UID":"180363646902239241","parsed":{    "timestamp":"2017-01-19 12:15:46",    "workerId":"4",    "sequence":"9"        }}
-    System.out.println(uidGenerator.parseUID(uid));
-
-}
-```
-
-### 在Spring Boot项目使用UID组件
-
-本项目提供了一个名为 uid-consumer 的 Spring Boot 的项目例子以供参考。
-
-运行步骤：
-
-1、参考单元测试修改uid-consumer的 *[application.yml](uid-consumer/src/main/resources/application.yml)*；
-
-2、启动 uid-consumer 应用；
-
-3、在浏览器访问：
-
-- http://localhost:9999/testdefaultuid, 生成UID
-- http://localhost:9999/testcacheduid, 生成预先缓存的UID
+#### [RunTest](src/main/java/io/wwytake/uid/run/RunTest.java)
 
 ### 关于UID比特分配的建议
 

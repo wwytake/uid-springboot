@@ -13,7 +13,7 @@ import io.wwytake.uid.utils.AbstractDateUtils;
  * @author tangyz
  *
  */
-@ConfigurationProperties(prefix = "prong.uid")
+@ConfigurationProperties(prefix = "wwytake.uid")
 public class UidProperties {
 
     /** 时间增量值占用位数。当前时间相对于时间基点的增量值，单位为秒 */

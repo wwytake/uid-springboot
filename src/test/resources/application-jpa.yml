@@ -4,7 +4,7 @@
 spring:
   profiles: default
 # 以下为可选配置, 如未指定将采用默认值
-prong:
+wwytake:
   uid:
     timeBits: 29
     workerBits: 21
@@ -16,7 +16,7 @@ prong:
 spring:
   profiles: cache
 # 以下为可选配置, 如未指定将采用默认值
-prong:
+wwytake:
   uid:
     timeBits: 29
     workerBits: 21

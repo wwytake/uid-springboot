@@ -51,7 +51,7 @@ import io.wwytake.uid.exception.UidGenerateException;
  * @author yutianbao
  * @author tangyz
  */
-@ConfigurationProperties(prefix = "prong.uid.CachedUidGenerator")
+@ConfigurationProperties(prefix = "wwytake.uid.CachedUidGenerator")
 public class CachedUidGenerator extends DefaultUidGenerator implements DisposableBean {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CachedUidGenerator.class);
