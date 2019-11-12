@@ -1,4 +1,7 @@
-UidGenerator
+# uid-springboot  
+
+[![Build Status](https://travis-ci.org/wwytake/uid-springboot.svg?branch=master)](https://travis-ci.org/wwytake/uid-springboot)  
+
 ==========================
 ## 前言
 
