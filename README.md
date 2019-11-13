@@ -111,6 +111,73 @@ Quick Start
 
 #### [RunTest](src/test/java/io/wwytake/uid/run/MybaitsDefaultRunTest.java)
 
+```
+
+@SpringBootTest(classes = TestApplication.class,
+        properties = {"spring.profiles.active=mybatis,default"}
+        ,webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@RunWith(SpringRunner.class)
+@Slf4j
+public  class MybaitsDefaultRunTest{
+
+    @Autowired
+    private UidGenerator defaultUidGenerator;
+
+    @Test
+    public void mybaitsTest(){
+        log.info(defaultUidGenerator.getUID()+"");
+        Assert.assertNotNull(defaultUidGenerator.getUID());
+    }
+}
+
+```
+
+#### mybaits 配置
+
+```
+mybatis:
+  mapper-locations: classpath*:io/wwytake/uid/**/*.xml
+```
+
+#### JPA 引入
+
+#### [RunTest](src/test/java/io/wwytake/uid/run/jpa/JPADefaultRunTest.java)
+
+```
+
+    @Configuration
+    @ConditionalOnClass({RepositoryConfigurationSource.class})
+    @EnableJpaRepositories
+    @EntityScan("io.wwytake.uid.worker")
+    public static class JPAAutoConfig{
+        @Bean
+        WorkerNodeHandler workNodeJpaHandler() {
+            return new WorkNodeJpaHandler();
+        }
+    }
+
+```
+
+注册WorkerNodeHandler
+#### 建表语句[mysql]
+
+```
+DROP TABLE IF EXISTS WORKER_NODE;
+CREATE TABLE WORKER_NODE
+(
+ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
+HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
+PORT VARCHAR(64) NOT NULL COMMENT 'port',
+TYPE INT NOT NULL COMMENT 'node type: ACTUAL or CONTAINER',
+LAUNCH_DATE DATE NOT NULL COMMENT 'launch date',
+MODIFIED TIMESTAMP NOT NULL COMMENT 'modified time',
+CREATED TIMESTAMP NOT NULL COMMENT 'created time',
+PRIMARY KEY(ID)
+)
+ COMMENT='DB WorkerID Assigner for UID Generator',ENGINE = INNODB;
+
+```
+
 ### 关于UID比特分配的建议
 
 对于**并发数要求不高、期望长期使用**的应用，可增加```timeBits```位数, 减少```seqBits```位数。例如节点采取用完即弃的 WorkerIdAssigner 策略，重启频率为12次/天，那么配置成 `{"workerBits":23,"timeBits":31,"seqBits":9}` 时，可支持28个节点以整体并发量14400 UID/s的速度持续运行68年。

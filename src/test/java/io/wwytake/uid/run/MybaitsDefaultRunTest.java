@@ -21,7 +21,7 @@ public  class MybaitsDefaultRunTest{
 
     @Test
     public void mybaitsTest(){
-        log.debug(defaultUidGenerator.getUID()+"");
+        log.info(defaultUidGenerator.getUID()+"");
         Assert.assertNotNull(defaultUidGenerator.getUID());
     }
 }

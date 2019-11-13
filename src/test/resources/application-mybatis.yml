@@ -14,7 +14,7 @@ mybatis:
     default-fetch-size: 100
     default-statement-timeout: 30
     map-underscore-to-camel-case: true
-  mapper-locations: classpath*:mapper/**/*.xml
+  mapper-locations: classpath*:io/wwytake/uid/**/*.xml
 
 ---
 
@@ -37,4 +37,4 @@ mybatis: # mybatis配置官方说明 http://www.mybatis.org/spring-boot-starter/
     default-fetch-size: 100
     default-statement-timeout: 30
     map-underscore-to-camel-case: true
-  mapper-locations: classpath*:mapper/**/*.xml
+  mapper-locations: classpath*:io/wwytake/uid/**/*.xml

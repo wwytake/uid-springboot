@@ -1,4 +1,4 @@
-package io.wwytake.uid.worker.jpa;
+package io.wwytake.uid.jpa.jpa;
 
 import io.wwytake.uid.worker.WorkerNodeHandler;
 import io.wwytake.uid.worker.entity.WorkerNodeEntity;

@@ -28,6 +28,7 @@ import io.wwytake.uid.UidGenerator;
 import io.wwytake.uid.exception.UidGenerateException;
 import io.wwytake.uid.utils.AbstractDateUtils;
 import io.wwytake.uid.worker.WorkerIdAssigner;
+import org.springframework.boot.CommandLineRunner;
 
 /**
  * Represents an implementation of {@link UidGenerator}
@@ -59,7 +60,7 @@ import io.wwytake.uid.worker.WorkerIdAssigner;
  * @author yutianbao
  * @author tangyz
  */
-public class DefaultUidGenerator implements UidGenerator, InitializingBean {
+public class DefaultUidGenerator implements UidGenerator, CommandLineRunner {
 	
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUidGenerator.class);
 
@@ -86,8 +87,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
     public DefaultUidGenerator(UidProperties uidProperties) {
     	this.uidProperties = uidProperties;
     }
-    
-    @Override
+
     public void afterPropertiesSet() throws Exception {
         // initialize bits allocator
         bitsAllocator = new BitsAllocator(uidProperties.getTimeBits(), uidProperties.getWorkerBits(), uidProperties.getSeqBits());
@@ -198,5 +198,8 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
     }
 
 
-
+    @Override
+    public void run(String... strings) throws Exception {
+        afterPropertiesSet();
+    }
 }

@@ -1,4 +1,4 @@
-package io.wwytake.uid.worker.jpa;
+package io.wwytake.uid.jpa.jpa;
 import io.wwytake.uid.worker.entity.WorkerNodeEntity;
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,7 +13,7 @@ public interface WorkNodeRepository extends CrudRepository<WorkerNodeEntity, Lon
      * @param port
      * @return
      */
-    WorkerNodeEntity findByHostNameAndPort(String host,String port);
+    WorkerNodeEntity findByHostNameAndPort(String host, String port);
 
     /**
      *
