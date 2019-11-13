@@ -111,8 +111,7 @@ Quick Start
 
 #### [RunTest](src/test/java/io/wwytake/uid/run/MybaitsDefaultRunTest.java)
 
-```
-
+```java
 @SpringBootTest(classes = TestApplication.class,
         properties = {"spring.profiles.active=mybatis,default"}
         ,webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -129,12 +128,11 @@ public  class MybaitsDefaultRunTest{
         Assert.assertNotNull(defaultUidGenerator.getUID());
     }
 }
-
 ```
 
 #### mybaits 配置
 
-```
+```yaml
 mybatis:
   mapper-locations: classpath*:io/wwytake/uid/**/*.xml
 ```
@@ -143,8 +141,7 @@ mybatis:
 
 #### [RunTest](src/test/java/io/wwytake/uid/run/jpa/JPADefaultRunTest.java)
 
-```
-
+```java
     @Configuration
     @ConditionalOnClass({RepositoryConfigurationSource.class})
     @EnableJpaRepositories
@@ -161,7 +158,7 @@ mybatis:
 注册WorkerNodeHandler
 #### 建表语句[mysql]
 
-```
+```sql
 DROP TABLE IF EXISTS WORKER_NODE;
 CREATE TABLE WORKER_NODE
 (
