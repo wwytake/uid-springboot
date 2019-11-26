@@ -113,7 +113,7 @@ Quick Start
 
 ```java
 @SpringBootTest(classes = TestApplication.class,
-        properties = {"spring.profiles.active=mybatis,default"}
+        properties = {"spring.profiles.active=test,default"}
         ,webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
 @Slf4j
@@ -130,30 +130,6 @@ public  class MybaitsDefaultRunTest{
 }
 ```
 
-#### mybaits 配置
-
-```yaml
-mybatis:
-  mapper-locations: classpath*:io/wwytake/uid/**/*.xml
-```
-
-#### JPA 引入
-
-#### [RunTest](src/test/java/io/wwytake/uid/run/jpa/JPADefaultRunTest.java)
-
-```java
-    @Configuration
-    @ConditionalOnClass({RepositoryConfigurationSource.class})
-    @EnableJpaRepositories
-    @EntityScan("io.wwytake.uid.worker")
-    public static class JPAAutoConfig{
-        @Bean
-        WorkerNodeHandler workNodeJpaHandler() {
-            return new WorkNodeJpaHandler();
-        }
-    }
-
-```
 
 注册WorkerNodeHandler
 #### 建表语句[mysql]
