@@ -22,59 +22,48 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import io.wwytake.uid.worker.WorkerNodeType;
 
-import javax.persistence.*;
 
 /**
  * Entity for M_WORKER_NODE
  *
  * @author yutianbao
  */
-@Entity
-@Table(name = "WORKER_NODE", schema = "", catalog = "")
+
 public class WorkerNodeEntity {
 
     /**
      * Entity unique id (table unique)
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     private long id;
 
     /**
      * Type of CONTAINER: HostName, ACTUAL : IP.
      */
-    @Column(name = "HOST_NAME")
     private String hostName;
 
     /**
      * Type of CONTAINER: Port, ACTUAL : Timestamp + Random(0-10000)
      */
-    @Column(name = "PORT")
     private String port;
 
     /**
      * type of {@link WorkerNodeType}
      */
-    @Column(name = "TYPE")
     private int type;
 
     /**
      * Worker launch date, default now
      */
-    @Column(name = "LAUNCH_DATE")
     private Date launchDate = new Date();
 
     /**
      * Created time
      */
-    @Column(name = "CREATED")
     private Date created;
 
     /**
      * Last modified
      */
-    @Column(name = "MODIFIED")
     private Date modified;
 
     /**

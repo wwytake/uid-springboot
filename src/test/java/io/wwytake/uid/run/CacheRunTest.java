@@ -1,5 +1,5 @@
-package io.wwytake.uid.jpa;
 import io.wwytake.uid.UidGenerator;
+import io.wwytake.uid.run.TestApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,22 +8,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@SpringBootTest(classes = JPAApplication.class,
-        properties = {"spring.profiles.active=jpa,default"}
+import java.util.HashSet;
+import java.util.Set;
+
+@SpringBootTest(classes = TestApplication.class,
+        properties = {"spring.profiles.active=test,cache"}
         ,webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
 @Slf4j
-public  class JPADefaultRunTest{
+public  class CacheRunTest {
 
     @Autowired
     private UidGenerator defaultUidGenerator;
 
-
     @Test
     public void uidtest(){
-        for (int j = 0; j < 100; j++) {
-            log.debug(defaultUidGenerator.getUID()+"");
-            Assert.assertNotNull(defaultUidGenerator.getUID());
+        Set<Long> hashSet = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            Long uid = defaultUidGenerator.getUID();
+            Assert.assertNotNull(uid);
+            Assert.assertFalse(hashSet.contains(uid));
+            hashSet.add(uid);
         }
 
     }

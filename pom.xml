@@ -39,32 +39,14 @@
 
     <distributionManagement>
         <repository>
-            <id>releases</id>
-            <url>http://192.168.200.36:8081/nexus/content/repositories/releases</url>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/wwytake/uid-springboot</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>http://192.168.200.36:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-
     </distributionManagement>
-
-
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybaits-starter.version}</version>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
