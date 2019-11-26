@@ -5,7 +5,7 @@
 ==========================
 ## 前言
 
-本组件是 [百度UID](https://github.com/baidu/uid-generator) 的一个派生版本，改造为基于spring boot 的版本 ,集成mybatis,jpa实现.
+本组件是 [百度UID](https://github.com/baidu/uid-generator) 的一个派生版本，改造为基于spring boot 的版本.使用jdbc连接数据库,不依赖其他ORM框架
 
 工程结构说明：
 

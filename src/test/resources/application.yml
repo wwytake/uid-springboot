@@ -1,8 +1,4 @@
 spring:
-  jpa:
-    properties:
-      hibernate:
-        dialect: io.wwytake.uid.sqlite.SQLiteDialect
   profiles:
     active: ${config_profile:test}
   datasource:
