@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.wwytake.uid.UidAutoConfigure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.wwytake.uid.UidAutoConfigure
