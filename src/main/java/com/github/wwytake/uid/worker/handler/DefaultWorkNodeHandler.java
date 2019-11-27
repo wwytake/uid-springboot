@@ -2,10 +2,19 @@ package com.github.wwytake.uid.worker.handler;
 
 import com.github.wwytake.uid.worker.WorkerNodeHandler;
 import com.github.wwytake.uid.worker.entity.WorkerNodeEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Resource;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
+@Slf4j
 public class DefaultWorkNodeHandler implements WorkerNodeHandler {
 
     @Resource
@@ -13,11 +22,33 @@ public class DefaultWorkNodeHandler implements WorkerNodeHandler {
 
     @Override
     public WorkerNodeEntity getWorkerNodeByHostPort(String host, String port) {
-        return jdbcTemplate.queryForObject("SELECT ID id,HOST_NAME hostName,PORT port,`TYPE` `type`,LAUNCH_DATE launchDate,MODIFIED modified,CREATED created FROM WORKER_NODE WHERE HOST_NAME = ? AND PORT = ?",new Object[]{host,port},WorkerNodeEntity.class);
+        try {
+            return jdbcTemplate.queryForObject("SELECT ID id,HOST_NAME hostName,PORT port,`TYPE` `type`,LAUNCH_DATE launchDate,MODIFIED modified,CREATED created FROM WORKER_NODE WHERE HOST_NAME = ? AND PORT = ?",new Object[]{host,port},WorkerNodeEntity.class);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return null;
+        }
     }
 
     @Override
     public void addWorkerNode(WorkerNodeEntity workerNodeEntity) {
-        jdbcTemplate.update("INSERT INTO WORKER_NODE (HOST_NAME,PORT,`TYPE`,LAUNCH_DATE,MODIFIED,CREATED) VALUES (?,?,?,?,?,?)",new Object[]{workerNodeEntity.getHostName(),workerNodeEntity.getType(),workerNodeEntity.getPort(),workerNodeEntity.getLaunchDate(),workerNodeEntity.getModified(),workerNodeEntity.getCreated()});
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps =     con.prepareStatement("INSERT INTO WORKER_NODE (HOST_NAME,PORT,`TYPE`,LAUNCH_DATE,MODIFIED,CREATED) VALUES (?,?,?,?,?,?)");
+
+                ps.setString(1,workerNodeEntity.getHostName());
+                ps.setInt(2,workerNodeEntity.getType());
+                ps.setString(3,workerNodeEntity.getPort());
+                ps.setDate(4,new Date(workerNodeEntity.getLaunchDate().getTime()));
+                ps.setDate(5,new Date(workerNodeEntity.getModified().getTime()));
+                ps.setDate(6,new Date(workerNodeEntity.getCreated().getTime()));
+
+                return ps;
+            }
+        },keyHolder);
+        workerNodeEntity.setId(keyHolder.getKey().longValue());
     }
 }

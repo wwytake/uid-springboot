@@ -33,7 +33,7 @@ public class WorkerNodeEntity {
     /**
      * Entity unique id (table unique)
      */
-    private long id;
+    private Long id;
 
     /**
      * Type of CONTAINER: HostName, ACTUAL : IP.
