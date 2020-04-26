@@ -12,6 +12,7 @@ import com.github.wwytake.uid.worker.handler.DefaultWorkNodeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,24 +33,27 @@ public class UidAutoConfigure {
 
     @Bean
     @ConditionalOnMissingBean
-    WorkerIdAssigner disposableWorkerIdAssigner(){
+    WorkerIdAssigner disposableWorkerIdAssigner() {
         return new DisposableWorkerIdAssigner();
     }
 
     @Bean
-    DefaultUidGenerator defaultUidGenerator() {
-        return new DefaultUidGenerator(uidProperties);
-    }
-
-    @Bean
+    @ConditionalOnProperty(name = "type", prefix = "wwytake.uid", havingValue = "cache")
     CachedUidGenerator cachedUidGenerator() {
         return new CachedUidGenerator(uidProperties);
     }
 
-        @Bean
-        @ConditionalOnMissingBean()
-        WorkerNodeHandler workNodeMybatisHandler() {
-            return new DefaultWorkNodeHandler();
-        }
+    @Bean
+    @ConditionalOnMissingBean
+    DefaultUidGenerator defaultUidGenerator() {
+        return new DefaultUidGenerator(uidProperties);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean()
+    WorkerNodeHandler workNodeMybatisHandler() {
+        return new DefaultWorkNodeHandler();
+    }
 
 }

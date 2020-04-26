@@ -22,7 +22,7 @@ wwytake:
     workerBits: 21
     seqBits: 13
     epochStr: "2018-11-26"
-    type: cache
+    type: "cache"
     cached-uid-generator:
       boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
       padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50

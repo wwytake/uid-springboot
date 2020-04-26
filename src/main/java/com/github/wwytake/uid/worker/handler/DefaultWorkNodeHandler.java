@@ -9,10 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Resource;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Slf4j
 public class DefaultWorkNodeHandler implements WorkerNodeHandler {
@@ -37,11 +34,11 @@ public class DefaultWorkNodeHandler implements WorkerNodeHandler {
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                PreparedStatement ps =     con.prepareStatement("INSERT INTO WORKER_NODE (HOST_NAME,PORT,`TYPE`,LAUNCH_DATE,MODIFIED,CREATED) VALUES (?,?,?,?,?,?)");
+                PreparedStatement ps =     con.prepareStatement("INSERT INTO WORKER_NODE (HOST_NAME,PORT,`TYPE`,LAUNCH_DATE,MODIFIED,CREATED) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
                 ps.setString(1,workerNodeEntity.getHostName());
-                ps.setInt(2,workerNodeEntity.getType());
-                ps.setString(3,workerNodeEntity.getPort());
+                ps.setString(2,workerNodeEntity.getPort());
+                ps.setInt(3,workerNodeEntity.getType());
                 ps.setDate(4,new Date(workerNodeEntity.getLaunchDate().getTime()));
                 ps.setDate(5,new Date(workerNodeEntity.getModified().getTime()));
                 ps.setDate(6,new Date(workerNodeEntity.getCreated().getTime()));

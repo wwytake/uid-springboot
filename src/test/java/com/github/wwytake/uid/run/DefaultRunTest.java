@@ -23,7 +23,7 @@ public  class DefaultRunTest {
     private UidGenerator defaultUidGenerator;
 
     @Test
-    public void mybaitsTest(){
+    public void uidTest(){
         Set<Long> hashSet = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
             Long uid = defaultUidGenerator.getUID();
