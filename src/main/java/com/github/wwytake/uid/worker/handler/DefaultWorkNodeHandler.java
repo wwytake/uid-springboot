@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import javax.annotation.Resource;
 import java.sql.*;
 
+
 @Slf4j
 public class DefaultWorkNodeHandler implements WorkerNodeHandler {
 
@@ -35,7 +36,6 @@ public class DefaultWorkNodeHandler implements WorkerNodeHandler {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps =     con.prepareStatement("INSERT INTO WORKER_NODE (HOST_NAME,PORT,`TYPE`,LAUNCH_DATE,MODIFIED,CREATED) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-
                 ps.setString(1,workerNodeEntity.getHostName());
                 ps.setString(2,workerNodeEntity.getPort());
                 ps.setInt(3,workerNodeEntity.getType());
