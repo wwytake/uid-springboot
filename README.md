@@ -7,16 +7,71 @@
 
 本组件是 [百度UID](https://github.com/baidu/uid-generator) 的一个派生版本，改造为基于spring boot 的版本.使用jdbc连接数据库,不依赖其他ORM框架
 
-工程结构说明：
 
-```shell
-├── LICENSE
-├── README.md
-├── logs			# 日志目录
-├── pom.xml			# 父POM
-└── src	# UID源码
+## 使用
+
+#### 建表语句[mysql]
+
+```sql
+DROP TABLE IF EXISTS WORKER_NODE;
+CREATE TABLE WORKER_NODE
+(
+ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
+HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
+PORT VARCHAR(64) NOT NULL COMMENT 'port',
+TYPE INT NOT NULL COMMENT 'node type: ACTUAL or CONTAINER',
+LAUNCH_DATE DATE NOT NULL COMMENT 'launch date',
+MODIFIED TIMESTAMP NOT NULL COMMENT 'modified time',
+CREATED TIMESTAMP NOT NULL COMMENT 'created time',
+PRIMARY KEY(ID)
+)
+ COMMENT='DB WorkerID Assigner for UID Generator',ENGINE = INNODB;
+
+```
+#### maven依赖
+```xml
+<dependency>
+  <groupId>com.github.wwytake</groupId>
+  <artifactId>uid-springboot</artifactId>
+  <version>2.0.2-release</version>
+</dependency>
 ```
 
+#### 配置
+```yaml
+wwytake:
+  uid: 
+    timeBits: 29
+    workerBits: 21
+    seqBits: 13
+    epochStr: "2018-11-26"
+    type: "cache"
+    CachedUidGenerator:          # 无此项,默认DefaultUidGenerator
+          boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
+          padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
+          #schedule-interval: 60  # 默认:不配置此项, 即不实用Schedule线程. 如需使用, 请指定Schedule线程时间间隔, 单位:秒
+```
+
+#### [RunTest](src/test/java/io/wwytake/uid/run/DefaultRunTest.java)
+
+```java
+public  class DefaultRunTest {
+
+    @Autowired
+    private UidGenerator defaultUidGenerator;
+
+    @Test
+    public void mybaitsTest(){
+        Set<Long> hashSet = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            Long uid = defaultUidGenerator.getUID();
+            Assert.assertNotNull(uid);
+            Assert.assertFalse(hashSet.contains(uid));
+            hashSet.add(uid);
+        }
+    }
+}
+```
 ## 概述
 
 UidGenerator是Java实现的，基于[Snowflake](https://github.com/twitter/snowflake)算法的唯一ID生成器。UidGenerator以组件形式工作在应用项目中,
@@ -47,21 +102,7 @@ Snowflake算法描述：指定机器 & 同一时刻 & 某一并发序列，是�
 
   每秒下的并发序列，13 bits可支持每秒8192个并发。
 
-**以上参数均可通过application.yml进行自定义**：
 
-```yaml
-wwytake:
-  uid: 
-    timeBits: 29
-    workerBits: 21
-    seqBits: 13
-    epochStr: "2018-11-26"
-    type: "cache"
-    CachedUidGenerator:          # 无此项,默认DefaultUidGenerator
-          boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
-          padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
-          #schedule-interval: 60  # 默认:不配置此项, 即不实用Schedule线程. 如需使用, 请指定Schedule线程时间间隔, 单位:秒
-```
 
 ## 组件功能简述
 
@@ -105,52 +146,6 @@ CachedUidGenerator采用了双RingBuffer，Uid-RingBuffer用于存储Uid、Flag-
   通过Schedule线程，定时补全空闲slots。可通过```scheduleInterval```配置，以应用定时填充功能，并指定Schedule时间间隔。
 
 
-Quick Start
-------------
-
-### 单元测试
-
-#### [RunTest](src/test/java/io/wwytake/uid/run/DefaultRunTest.java)
-
-```java
-public  class DefaultRunTest {
-
-    @Autowired
-    private UidGenerator defaultUidGenerator;
-
-    @Test
-    public void mybaitsTest(){
-        Set<Long> hashSet = new HashSet<>();
-        for (int i = 0; i < 1000; i++) {
-            Long uid = defaultUidGenerator.getUID();
-            Assert.assertNotNull(uid);
-            Assert.assertFalse(hashSet.contains(uid));
-            hashSet.add(uid);
-        }
-    }
-}
-```
-
-
-注册WorkerNodeHandler
-#### 建表语句[mysql]
-
-```sql
-DROP TABLE IF EXISTS WORKER_NODE;
-CREATE TABLE WORKER_NODE
-(
-ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
-HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
-PORT VARCHAR(64) NOT NULL COMMENT 'port',
-TYPE INT NOT NULL COMMENT 'node type: ACTUAL or CONTAINER',
-LAUNCH_DATE DATE NOT NULL COMMENT 'launch date',
-MODIFIED TIMESTAMP NOT NULL COMMENT 'modified time',
-CREATED TIMESTAMP NOT NULL COMMENT 'created time',
-PRIMARY KEY(ID)
-)
- COMMENT='DB WorkerID Assigner for UID Generator',ENGINE = INNODB;
-
-```
 
 ### 关于UID比特分配的建议
 
