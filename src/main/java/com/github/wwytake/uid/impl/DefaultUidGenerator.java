@@ -33,11 +33,11 @@ import org.springframework.boot.CommandLineRunner;
  * Represents an implementation of {@link UidGenerator}
  *
  * The unique id has 64bits (long), default allocated as blow:<br>
- * <li>sign: The highest bit is 0
- * <li>delta seconds: The next 28 bits, represents delta seconds since a customer epoch(2016-05-20 00:00:00.000).
+ * sign: The highest bit is 0
+ * delta seconds: The next 28 bits, represents delta seconds since a customer epoch(2016-05-20 00:00:00.000).
  *                    Supports about 8.7 years until to 2024-11-20 21:24:16
- * <li>worker id: The next 22 bits, represents the worker's id which assigns based on database, max id is about 420W
- * <li>sequence: The next 13 bits, represents a sequence within the same second, max for 8192/s<br><br>
+ * worker id: The next 22 bits, represents the worker's id which assigns based on database, max id is about 420W
+ * sequence: The next 13 bits, represents a sequence within the same second, max for 8192/s<br><br>
  *
  * The {@link DefaultUidGenerator#parseUID(long)} is a tool method to parse the bits
  *
@@ -49,10 +49,10 @@ import org.springframework.boot.CommandLineRunner;
  * }</pre>
  *
  * You can also specified the bits by Spring property setting.
- * <li>timeBits: default as 28
- * <li>workerBits: default as 22
- * <li>seqBits: default as 13
- * <li>epochStr: Epoch date string format 'yyyy-MM-dd'. Default as '2016-05-20'<p>
+ * timeBits: default as 28
+ * workerBits: default as 22
+ * seqBits: default as 13
+ * epochStr: Epoch date string format 'yyyy-MM-dd'. Default as '2016-05-20'<p>
  *
  * <b>Note that:</b> The total bits must be 64 -1
  *
@@ -189,9 +189,7 @@ public class DefaultUidGenerator implements UidGenerator, CommandLineRunner {
         return currentSecond;
     }
 
-    /**
-     * Setters for spring property
-     */
+
     public void setWorkerIdAssigner(WorkerIdAssigner workerIdAssigner) {
         this.workerIdAssigner = workerIdAssigner;
     }

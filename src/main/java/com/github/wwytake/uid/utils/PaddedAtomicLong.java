@@ -45,6 +45,7 @@ public class PaddedAtomicLong extends AtomicLong {
 
     /**
      * To prevent GC optimizations for cleaning unused padded references
+     * @return l
      */
     public long sumPaddingToPreventOptimization() {
         return p1 + p2 + p3 + p4 + p5 + p6;

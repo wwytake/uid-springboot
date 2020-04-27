@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 
 /**
  * Allocate 64 bits for the UID(long)<br>
- * sign (fixed 1bit) -> deltaSecond -> workerId -> sequence(within the same second)
+ * sign (fixed 1bit) - deltaSecond - workerId - sequence(within the same second)
  * 
  * @author yutianbao
  */
@@ -55,6 +55,9 @@ public class BitsAllocator {
     /**
      * Constructor with timestampBits, workerIdBits, sequenceBits<br>
      * The highest bit used for sign, so <code>63</code> bits for timestampBits, workerIdBits, sequenceBits
+     * @param timestampBits timestampBits
+     * @param workerIdBits workerIdBits
+     * @param sequenceBits sequenceBits
      */
     public BitsAllocator(int timestampBits, int workerIdBits, int sequenceBits) {
         // make sure allocated 64 bits
@@ -77,21 +80,19 @@ public class BitsAllocator {
     }
 
     /**
-     * Allocate bits for UID according to delta seconds & workerId & sequence<br>
+     * Allocate bits for UID according to delta seconds and workerId and sequence<br>
      * <b>Note that: </b>The highest bit will always be 0 for sign
      * 
-     * @param deltaSeconds
-     * @param workerId
-     * @param sequence
-     * @return
+     * @param deltaSeconds seconds
+     * @param workerId workerid
+     * @param sequence sequence
+     * @return allocate
      */
     public long allocate(long deltaSeconds, long workerId, long sequence) {
         return (deltaSeconds << timestampShift) | (workerId << workerIdShift) | sequence;
     }
     
-    /**
-     * Getters
-     */
+
     public int getSignBits() {
         return signBits;
     }

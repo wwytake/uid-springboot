@@ -28,8 +28,8 @@ public interface BufferedUidProvider {
     /**
      * Provides UID in one second
      * 
-     * @param momentInSecond
-     * @return
+     * @param momentInSecond m
+     * @return l
      */
     List<Long> provide(long momentInSecond);
 }

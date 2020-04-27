@@ -39,8 +39,8 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Parse date by 'yyyy-MM-dd' pattern
      *
-     * @param str
-     * @return
+     * @param str str
+     * @return date
      */
     public static Date parseByDayPattern(String str) {
         return parseDate(str, DAY_PATTERN);
@@ -49,8 +49,8 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Parse date by 'yyyy-MM-dd HH:mm:ss' pattern
      *
-     * @param str
-     * @return
+     * @param str str
+     * @return date
      */
     public static Date parseByDateTimePattern(String str) {
         return parseDate(str, DATETIME_PATTERN);
@@ -59,9 +59,9 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Parse date without Checked exception
      *
-     * @param str
-     * @param pattern
-     * @return
+     * @param str str
+     * @param pattern p
+     * @return date
      * @throws RuntimeException when ParseException occurred
      */
     public static Date parseDate(String str, String pattern) {
@@ -75,9 +75,9 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Format date into string
      *
-     * @param date
-     * @param pattern
-     * @return
+     * @param date date
+     * @param pattern p
+     * @return formatstr
      */
     public static String formatDate(Date date, String pattern) {
         return DateFormatUtils.format(date, pattern);
@@ -86,8 +86,8 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Format date by 'yyyy-MM-dd' pattern
      *
-     * @param date
-     * @return
+     * @param date date
+     * @return format str
      */
     public static String formatByDayPattern(Date date) {
         if (date != null) {
@@ -100,8 +100,8 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Format date by 'yyyy-MM-dd HH:mm:ss' pattern
      *
-     * @param date
-     * @return
+     * @param date date
+     * @return str
      */
     public static String formatByDateTimePattern(Date date) {
         return DateFormatUtils.format(date, DATETIME_PATTERN);
@@ -110,8 +110,7 @@ public abstract class AbstractDateUtils extends org.apache.commons.lang.time.Dat
     /**
      * Get current day using format date by 'yyyy-MM-dd HH:mm:ss' pattern
      *
-     * @return
-     * @author yebo
+     * @return str str
      */
     public static String getCurrentDayByDayPattern() {
         Calendar cal = Calendar.getInstance();

@@ -27,8 +27,8 @@ public interface RejectedPutBufferHandler {
     /**
      * Reject put buffer request
      * 
-     * @param ringBuffer
-     * @param uid
+     * @param ringBuffer r
+     * @param uid uid
      */
     void rejectPutBuffer(RingBuffer ringBuffer, long uid);
 }
