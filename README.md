@@ -56,6 +56,7 @@ wwytake:
     workerBits: 21
     seqBits: 13
     epochStr: "2018-11-26"
+    type: "cache"
     CachedUidGenerator:          # 无此项,默认DefaultUidGenerator
           boost-power: 3          # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
           padding-factor: 50      # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
@@ -109,23 +110,23 @@ Quick Start
 
 ### 单元测试
 
-#### [RunTest](src/test/java/io/wwytake/uid/run/MybaitsDefaultRunTest.java)
+#### [RunTest](src/test/java/io/wwytake/uid/run/DefaultRunTest.java)
 
 ```java
-@SpringBootTest(classes = TestApplication.class,
-        properties = {"spring.profiles.active=test,default"}
-        ,webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@RunWith(SpringRunner.class)
-@Slf4j
-public  class MybaitsDefaultRunTest{
+public  class DefaultRunTest {
 
     @Autowired
     private UidGenerator defaultUidGenerator;
 
     @Test
     public void mybaitsTest(){
-        log.info(defaultUidGenerator.getUID()+"");
-        Assert.assertNotNull(defaultUidGenerator.getUID());
+        Set<Long> hashSet = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            Long uid = defaultUidGenerator.getUID();
+            Assert.assertNotNull(uid);
+            Assert.assertFalse(hashSet.contains(uid));
+            hashSet.add(uid);
+        }
     }
 }
 ```

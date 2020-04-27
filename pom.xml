@@ -35,10 +35,15 @@
     </dependencyManagement>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype</id>
+            <name>sonatype.snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>github</id>
-            <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/wwytake/uid-springboot</url>
+            <id>sonatype</id>
+            <name>sonatype.release</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
     </distributionManagement>
 

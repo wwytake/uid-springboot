@@ -20,13 +20,13 @@ import java.util.Set;
 public  class CacheRunTest {
 
     @Autowired
-    private UidGenerator defaultUidGenerator;
+    private UidGenerator uidGenerator;
 
     @Test
     public void uidtest(){
         Set<Long> hashSet = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
-            Long uid = defaultUidGenerator.getUID();
+            Long uid = uidGenerator.getUID();
             Assert.assertNotNull(uid);
             Assert.assertFalse(hashSet.contains(uid));
             hashSet.add(uid);
