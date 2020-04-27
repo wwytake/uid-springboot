@@ -28,10 +28,10 @@ import org.springframework.util.Assert;
  * the side effect of False Sharing, {@link PaddedAtomicLong} is using on 'tail' and 'cursor'<p>
  * 
  * A ring buffer is consisted of:
- * <li><b>slots:</b> each element of the array is a slot, which is be set with a UID
- * <li><b>flags:</b> flag array corresponding the same index with the slots, indicates whether can take or put slot
- * <li><b>tail:</b> a sequence of the max slot position to produce 
- * <li><b>cursor:</b> a sequence of the min slot position to consume
+ * <b>slots:</b> each element of the array is a slot, which is be set with a UID
+ * <b>flags:</b> flag array corresponding the same index with the slots, indicates whether can take or put slot
+ * <b>tail:</b> a sequence of the max slot position to produce
+ * <b>cursor:</b> a sequence of the min slot position to consume
  * 
  * @author yutianbao
  */
@@ -70,22 +70,22 @@ public class RingBuffer {
     /**
      * Constructor with buffer size, paddingFactor default as {@value #DEFAULT_PADDING_PERCENT}
      * 
-     * @param bufferSize must be positive & a power of 2
+     * @param bufferSize must be positive and a power of 2
      */
     public RingBuffer(int bufferSize) {
         this(bufferSize, DEFAULT_PADDING_PERCENT);
     }
-    
+
     /**
-     * Constructor with buffer size & padding factor
-     * 
-     * @param bufferSize must be positive & a power of 2
+     * Constructor with buffer size and padding factor
+     *
+     * @param bufferSize must be positive and a power of 2
      * @param paddingFactor percent in (0 - 100). When the count of rest available UIDs reach the threshold, it will trigger padding buffer<br>
-     *        Sample: paddingFactor=20, bufferSize=1000 -> threshold=1000 * 20 /100,  
-     *        padding buffer will be triggered when tail-cursor<threshold
+     *        Sample: paddingFactor=20, bufferSize=1000 - threshold=1000 * 20 /100,
+     *        padding buffer will be triggered when tail-cursor threshold
      */
     public RingBuffer(int bufferSize, int paddingFactor) {
-        // check buffer size is positive & a power of 2; padding factor in (0, 100)
+        // check buffer size is positive and a power of 2; padding factor in (0, 100)
         Assert.isTrue(bufferSize > 0L, "RingBuffer size must be positive");
         Assert.isTrue(Integer.bitCount(bufferSize) == 1, "RingBuffer size must be a power of 2");
         Assert.isTrue(paddingFactor > 0 && paddingFactor < 100, "RingBuffer size must be positive");
@@ -94,18 +94,18 @@ public class RingBuffer {
         this.indexMask = bufferSize - 1;
         this.slots = new long[bufferSize];
         this.flags = initFlags(bufferSize);
-        
+
         this.paddingThreshold = bufferSize * paddingFactor / 100;
     }
 
     /**
-     * Put an UID in the ring & tail moved<br>
-     * We use 'synchronized' to guarantee the UID fill in slot & publish new tail sequence as atomic operations<br>
-     * 
+     * Put an UID in the ring and tail moved<br>
+     * We use 'synchronized' to guarantee the UID fill in slot and publish new tail sequence as atomic operations<br>
+     *
      * <b>Note that: </b> It is recommended to put UID in a serialize way, cause we once batch generate a series UIDs and put
      * the one by one into the buffer, so it is unnecessary put in multi-threads
      *
-     * @param uid
+     * @param uid uid
      * @return false means that the buffer is full, apply {@link RejectedPutBufferHandler}
      */
     public synchronized boolean put(long uid) {
@@ -140,11 +140,11 @@ public class RingBuffer {
 
     /**
      * Take an UID of the ring at the next cursor, this is a lock free operation by using atomic cursor<p>
-     * 
-     * Before getting the UID, we also check whether reach the padding threshold, 
+     *
+     * Before getting the UID, we also check whether reach the padding threshold,
      * the padding buffer operation will be triggered in another thread<br>
      * If there is no more available UID to be taken, the specified {@link RejectedTakeBufferHandler} will be applied<br>
-     * 
+     *
      * @return UID
      * @throws IllegalStateException if the cursor moved back
      */
@@ -184,7 +184,9 @@ public class RingBuffer {
     }
 
     /**
-     * Calculate slot index with the slot sequence (sequence % bufferSize) 
+     * Calculate slot index with the slot sequence (sequence % bufferSize)
+     * @param sequence se
+     * @return s
      */
     protected int calSlotIndex(long sequence) {
         return (int) (sequence & indexMask);
@@ -192,6 +194,8 @@ public class RingBuffer {
 
     /**
      * Discard policy for {@link RejectedPutBufferHandler}, we just do logging
+     * @param ringBuffer r
+     * @param uid u
      */
     protected void discardPutBuffer(RingBuffer ringBuffer, long uid) {
         LOGGER.warn("Rejected putting buffer for uid:{}. {}", uid, ringBuffer);
@@ -199,6 +203,7 @@ public class RingBuffer {
     
     /**
      * Policy for {@link RejectedTakeBufferHandler}, throws {@link RuntimeException} after logging 
+     * @param ringBuffer r
      */
     protected void exceptionRejectedTakeBuffer(RingBuffer ringBuffer) {
         LOGGER.warn("Rejected take buffer. {}", ringBuffer);
@@ -207,6 +212,8 @@ public class RingBuffer {
     
     /**
      * Initialize flags as CAN_PUT_FLAG
+     * @param bufferSize b
+     * @return s
      */
     private PaddedAtomicLong[] initFlags(int bufferSize) {
         PaddedAtomicLong[] flags = new PaddedAtomicLong[bufferSize];
@@ -217,9 +224,7 @@ public class RingBuffer {
         return flags;
     }
 
-    /**
-     * Getters
-     */
+
     public long getTail() {
         return tail.get();
     }
@@ -232,9 +237,7 @@ public class RingBuffer {
         return bufferSize;
     }
 
-    /**
-     * Setters
-     */
+
     public void setBufferPaddingExecutor(BufferPaddingExecutor bufferPaddingExecutor) {
         this.bufferPaddingExecutor = bufferPaddingExecutor;
     }

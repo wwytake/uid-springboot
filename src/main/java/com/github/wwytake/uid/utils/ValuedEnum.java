@@ -25,7 +25,7 @@ package com.github.wwytake.uid.utils;
 public interface ValuedEnum<T> {
     /**
      *
-     * @return
+     * @return T
      */
     T value();
 }

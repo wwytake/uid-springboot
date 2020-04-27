@@ -6,15 +6,15 @@ import com.github.wwytake.uid.worker.entity.WorkerNodeEntity;
 public interface WorkerNodeHandler {
     /**
      *
-     * @param host
-     * @param port
-     * @return
+     * @param host host
+     * @param port post
+     * @return workNodeEntity
      */
     WorkerNodeEntity getWorkerNodeByHostPort(String host, String port);
 
     /**
      *
-     * @param workerNodeEntity
+     * @param workerNodeEntity workerNodeEntity
      */
     void addWorkerNode(WorkerNodeEntity workerNodeEntity);
 }

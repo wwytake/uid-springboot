@@ -19,9 +19,9 @@ import com.github.wwytake.uid.utils.ValuedEnum;
 
 /**
  * WorkerNodeType
- * <li>CONTAINER: Such as Docker
- * <li>ACTUAL: Actual machine
- * 
+ * CONTAINER: Such as Docker
+ * ACTUAL: Actual machine
+ *
  * @author yutianbao
  */
 public enum WorkerNodeType implements ValuedEnum<Integer> {

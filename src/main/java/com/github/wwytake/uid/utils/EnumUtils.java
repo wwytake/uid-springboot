@@ -26,10 +26,11 @@ public abstract class EnumUtils {
 
     /**
      * Parse the bounded value into ValuedEnum
-     * 
-     * @param clz
-     * @param value
-     * @return
+     * @param clz clz
+     * @param value value
+     * @param <T> t
+     * @param <V> v
+     * @return t
      */
     public static <T extends ValuedEnum<V>, V> T parse(Class<T> clz, V value) {
         Assert.notNull(clz, "clz can not be null");
@@ -48,10 +49,10 @@ public abstract class EnumUtils {
     /**
      * Null-safe valueOf function
      * 
-     * @param <T>
-     * @param enumType
-     * @param name
-     * @return
+     * @param <T> t
+     * @param enumType e
+     * @param name n
+     * @return t
      */
     public static <T extends Enum<T>> T valueOf(Class<T> enumType, String name) {
         if (name == null) {

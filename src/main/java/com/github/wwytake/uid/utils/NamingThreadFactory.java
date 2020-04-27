@@ -119,8 +119,8 @@ public class NamingThreadFactory implements ThreadFactory {
     /**
      * Get sequence for different naming prefix
      * 
-     * @param invoker
-     * @return
+     * @param invoker i
+     * @return l
      */
     private long getSequence(String invoker) {
         AtomicLong r = this.sequences.get(invoker);
@@ -135,9 +135,7 @@ public class NamingThreadFactory implements ThreadFactory {
         return r.incrementAndGet();
     }
 
-    /**
-     * Getters & Setters
-     */
+
     public String getName() {
         return name;
     }

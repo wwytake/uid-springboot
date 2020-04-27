@@ -65,9 +65,7 @@ public class WorkerNodeEntity {
      */
     private Date modified;
 
-    /**
-     * Getters & Setters
-     */
+
     public long getId() {
         return id;
     }

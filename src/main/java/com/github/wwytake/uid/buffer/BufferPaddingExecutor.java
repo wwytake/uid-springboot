@@ -76,7 +76,7 @@ public class BufferPaddingExecutor {
      *
      * @param ringBuffer {@link RingBuffer}
      * @param uidProvider {@link BufferedUidProvider}
-     * @param usingSchedule
+     * @param usingSchedule u
      */
     public BufferPaddingExecutor(RingBuffer ringBuffer, BufferedUidProvider uidProvider, boolean usingSchedule) {
         this.running = new AtomicBoolean(false);
@@ -121,7 +121,7 @@ public class BufferPaddingExecutor {
     /**
      * Whether is padding
      *
-     * @return
+     * @return s
      */
     public boolean isRunning() {
         return running.get();
@@ -163,9 +163,6 @@ public class BufferPaddingExecutor {
         LOGGER.debug("End to padding buffer lastSecond:{}. {}", lastSecond.get(), ringBuffer);
     }
 
-    /**
-     * Setters
-     */
     public void setScheduleInterval(long scheduleInterval) {
         Assert.isTrue(scheduleInterval > 0, "Schedule interval must positive!");
         this.scheduleInterval = scheduleInterval;
